@@ -5,8 +5,10 @@ import com.codeborne.xlstest.XLS;
 import com.opencsv.CSVReader;
 import org.junit.jupiter.api.*;
 
-import java.awt.*;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -16,7 +18,7 @@ public class ZipContentValidation {
 
     private ClassLoader cl = ZipContentValidation.class.getClassLoader();
 
-    //успешно
+
     @Test
     @Tag("Normal")
     @DisplayName("Проверяем совпадение csv в архиве - сравниваем с ожидаемыми значениями")
@@ -31,7 +33,6 @@ public class ZipContentValidation {
 
                     CSVReader csvReader = new CSVReader(new InputStreamReader(zis));
                     List<String[]> csvData = csvReader.readAll();
-                    System.out.println(csvData);
 
                     Assertions.assertEquals(4, csvData.size());
                     Assertions.assertArrayEquals(
@@ -53,7 +54,40 @@ public class ZipContentValidation {
 
     }
 
-    //успешно
+
+    @Test
+    @Tag("Normal")
+    @DisplayName("Проверяем совпадение csv в архиве - сравниваем с файлом в ресурсах")
+    void csvFromZipCompareFilesWithLocalCsv() throws Exception {
+
+        try (InputStream is1 = cl.getResourceAsStream("randomFiles.zip");
+            ZipInputStream zis = new ZipInputStream(is1);
+            InputStream is2 = cl.getResourceAsStream("expected/characters.csv")
+        ){
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null){
+                if (entry.getName().endsWith(".csv")){
+
+                    CSVReader csvReader = new CSVReader(new InputStreamReader(zis));
+                    CSVReader csvReaderExpected = new CSVReader(new InputStreamReader(is2));
+                    List<String[]> csvData = csvReader.readAll();
+                    List<String[]> csvDataExpected = csvReaderExpected.readAll();
+
+                    Assertions.assertArrayEquals(csvData.get(0), csvDataExpected.get(0));
+                    Assertions.assertArrayEquals(csvData.get(1), csvDataExpected.get(1));
+                    Assertions.assertArrayEquals(csvData.get(2), csvDataExpected.get(2));
+                    Assertions.assertArrayEquals(csvData.get(3), csvDataExpected.get(3));
+
+
+
+
+                }
+            }
+        }
+
+    }
+
+
     @Test
     @Tag("Normal")
     @DisplayName("Проверяем совпадение pdf в архиве - сравниваем с ожидаемыми значениями")
@@ -74,6 +108,7 @@ public class ZipContentValidation {
         }
 
     }
+
 
     @Test
     @Tag("Normal")
