@@ -13,9 +13,10 @@ dependencies {
             "commons-io:commons-io:2.18.0",
             "com.opencsv:opencsv:5.10",
             "com.codeborne:pdf-test:1.8.0",
-            "com.codeborne:xls-test:1.4.3"
-
-
+            "com.codeborne:xls-test:1.4.3",
+            "com.fasterxml.jackson.core:jackson-core:2.18.2",
+            "com.fasterxml.jackson.core:jackson-databind:2.18.2",
+            'com.fasterxml.jackson.core:jackson-annotations:2.18.2'
     )
 }
 
